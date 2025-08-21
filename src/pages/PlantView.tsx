@@ -38,7 +38,7 @@ export default function PlantView() {
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
   return (
-    <div className="p-6 bg-green-50 min-h-screen">
+    <div className="min-h-screen bg-green-50 pt-12 px-6 md:px-12">
       <h1 className="text-3xl font-bold text-green-800 mb-6 text-center">
         Plant Collection
       </h1>

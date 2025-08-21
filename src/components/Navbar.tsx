@@ -11,10 +11,15 @@ export default function Navbar() {
     navigate("/login");
   };
 
+  // Don't show navbar while checking auth status
+  if (token === undefined) {
+    return null;
+  }
+
   return (
     <nav className="bg-green-700 text-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold">
+        <Link to={token ? "/plants" : "/login"} className="text-2xl font-bold">
           PlantPal
         </Link>
 

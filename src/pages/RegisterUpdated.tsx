@@ -1,8 +1,10 @@
+// RegisterUpdated.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { registerUser } from "../api/userService";
 import type { TUserCreateInput } from "../types/user";
+import { motion } from "framer-motion";
 
 export default function RegisterUpdated() {
   const navigate = useNavigate();
@@ -37,7 +39,13 @@ export default function RegisterUpdated() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-green-200 to-green-400">
-      <div className="relative w-[768px] max-w-full min-h-[480px] bg-white rounded-3xl shadow-xl overflow-hidden flex">
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        transition={{ duration: 0.5 }}
+        className="relative w-[768px] max-w-full min-h-[480px] bg-white rounded-3xl shadow-xl overflow-hidden flex"
+      >
         {/* Sign Up Form */}
         <div className="flex-1 flex flex-col justify-center items-center p-8">
           <form onSubmit={handleSubmit} className="w-full max-w-xs">
@@ -82,7 +90,7 @@ export default function RegisterUpdated() {
             <p className="mt-4 text-sm text-center">
               Already have an account?{" "}
               <span
-                className="text-green-700 font-semibold cursor-pointer"
+                className="text-green-700 font-semibold cursor-pointer hover:underline"
                 onClick={() => navigate("/login")}
               >
                 Login
@@ -98,7 +106,7 @@ export default function RegisterUpdated() {
             Register with your personal details to use all PlantPal features
           </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

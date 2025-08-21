@@ -29,7 +29,10 @@ export default function PlantCard({ plant, onDelete }: PlantCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <div
+      onClick={() => navigate(`/plants/${plant.id}`)}
+      className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+    >
       <img
         src={plant.imageUrl || "/placeholder-plant.png"}
         alt={plant.name}
@@ -44,13 +47,19 @@ export default function PlantCard({ plant, onDelete }: PlantCardProps) {
         </p>
         <div className="mt-4 flex justify-between">
           <button
-            onClick={() => navigate(`/plants/update/${plant.id}`)}
+            onClick={(e) => {
+              e.stopPropagation(); // prevent parent onClick
+              navigate(`/plants/update/${plant.id}`);
+            }}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
           >
             Edit
           </button>
           <button
-            onClick={handleDelete}
+            onClick={(e) => {
+              e.stopPropagation(); // prevent parent onClick
+              handleDelete();
+            }}
             className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
           >
             Delete

@@ -1,8 +1,10 @@
+// LoginUpdate.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../api/authService";
 import type { TLoginInput, TAuthResponse } from "../types/auth";
+import { motion } from "framer-motion";
 
 export default function LoginUpdated() {
   const navigate = useNavigate();
@@ -36,7 +38,21 @@ export default function LoginUpdated() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-green-200 to-green-400">
-      <div className="relative w-[768px] max-w-full min-h-[480px] bg-white rounded-3xl shadow-xl overflow-hidden flex">
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 20 }}
+        transition={{ duration: 0.5 }}
+        className="relative w-[768px] max-w-full min-h-[480px] bg-white rounded-3xl shadow-xl overflow-hidden flex"
+      >
+        {/* Left Side Panel */}
+        <div className="flex-1 bg-gradient-to-r from-green-600 to-green-800 text-white flex flex-col justify-center items-center p-8">
+          <h1 className="text-2xl font-bold">Welcome Back!</h1>
+          <p className="mt-2 text-sm text-center max-w-xs">
+            Enter your personal details to use all PlantPal features
+          </p>
+        </div>
+
         {/* Sign In Form */}
         <div className="flex-1 flex flex-col justify-center items-center p-8">
           <form onSubmit={handleSubmit} className="w-full max-w-xs">
@@ -70,9 +86,9 @@ export default function LoginUpdated() {
               {loading ? "Logging in..." : "Login"}
             </button>
             <p className="mt-4 text-sm text-center">
-              Don’t have an account?{" "}
+              Don't have an account?{" "}
               <span
-                className="text-green-700 font-semibold cursor-pointer"
+                className="text-green-700 font-semibold cursor-pointer hover:underline"
                 onClick={() => navigate("/register")}
               >
                 Register
@@ -80,15 +96,7 @@ export default function LoginUpdated() {
             </p>
           </form>
         </div>
-
-        {/* Right Side Panel */}
-        <div className="flex-1 bg-gradient-to-r from-green-600 to-green-800 text-white flex flex-col justify-center items-center p-8">
-          <h1 className="text-2xl font-bold">Welcome Back!</h1>
-          <p className="mt-2 text-sm text-center max-w-xs">
-            Enter your personal details to use all PlantPal features
-          </p>
-        </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -1,0 +1,47 @@
+import { Routes, Route, Navigate } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
+import PlantView from "../pages/PlantView";
+import PlantFullView from "../pages/PlantFullView";
+import CreatePlant from "../pages/CreatePlant";
+import UpdatePlant from "../pages/UpdatePlant";
+
+export default function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/plants" replace />} />
+      <Route
+        path="/plants"
+        element={
+          <ProtectedRoute>
+            <PlantView />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/plants/create"
+        element={
+          <ProtectedRoute>
+            <CreatePlant />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/plants/update/:id"
+        element={
+          <ProtectedRoute>
+            <UpdatePlant />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/plants/:id"
+        element={
+          <ProtectedRoute>
+            <PlantFullView />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/plants" replace />} />
+    </Routes>
+  );
+}
