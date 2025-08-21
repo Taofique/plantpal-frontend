@@ -10,6 +10,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PlantView from "./pages/PlantView";
 import CreatePlant from "./pages/CreatePlant";
+import UpdatePlant from "./pages/UpdatePlant";
+import LoginUpdated from "./pages/LoginUpdated";
+import RegisterUpdated from "./pages/RegisterUpdated";
 
 export default function App() {
   return (
@@ -19,8 +22,8 @@ export default function App() {
 
         <Routes>
           {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<LoginUpdated />} />
+          <Route path="/register" element={<RegisterUpdated />} />
 
           {/* Protected Routes */}
           <Route
@@ -36,6 +39,15 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <CreatePlant />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/plants/update/:id"
+            element={
+              <ProtectedRoute>
+                <UpdatePlant />
               </ProtectedRoute>
             }
           />

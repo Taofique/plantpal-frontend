@@ -40,7 +40,7 @@ export default function PlantCard({ plant, onDelete }: PlantCardProps) {
         <p className="text-gray-600 text-sm mt-1">{plant.category}</p>
         <p className="text-gray-700 mt-2">{plant.description}</p>
         <p className="text-gray-500 mt-2 text-sm">
-          Water Frequency: {plant.waterFrequency} days
+          Water Frequency: {plant.waterFrequency} times per week
         </p>
         <div className="mt-4 flex justify-between">
           <button
