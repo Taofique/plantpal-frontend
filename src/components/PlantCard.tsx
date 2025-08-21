@@ -31,7 +31,7 @@ export default function PlantCard({ plant, onDelete }: PlantCardProps) {
   return (
     <div
       onClick={() => navigate(`/plants/${plant.id}`)}
-      className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+      className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 border-2 border-green-500"
     >
       <img
         src={plant.imageUrl || "/placeholder-plant.png"}
