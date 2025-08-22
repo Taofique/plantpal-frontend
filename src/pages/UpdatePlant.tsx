@@ -78,7 +78,7 @@ export default function UpdatePlant() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-green-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md border-2 border-green-300">
         <h2 className="text-2xl font-bold mb-6 text-green-900">Update Plant</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
