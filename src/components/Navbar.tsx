@@ -85,17 +85,19 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Back button pinned to far-left */}
-      <button
-        type="button"
-        onClick={() => navigate(-1)}
-        className="absolute top-1/2 left-4 -translate-y-1/2
-                   bg-white text-green-700 border border-green-300 
-                   rounded-lg px-3 py-1 hover:bg-green-100 transition 
-                   flex items-center gap-1"
-      >
-        <FaArrowLeft /> <span className="hidden sm:inline">Back</span>
-      </button>
+      {/* Back button pinned to far-left (only if logged in) */}
+      {token && (
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="absolute top-1/2 left-4 -translate-y-1/2
+                     bg-white text-green-700 border border-green-300 
+                     rounded-lg px-3 py-1 hover:bg-green-100 transition 
+                     flex items-center gap-1"
+        >
+          <FaArrowLeft /> <span className="hidden sm:inline">Back</span>
+        </button>
+      )}
 
       {/* Mobile menu dropdown */}
       <div
