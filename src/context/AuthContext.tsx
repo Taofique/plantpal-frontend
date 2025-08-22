@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import type { ReactNode } from "react";
 
 type AuthContextType = {
@@ -13,6 +14,10 @@ type AuthContextType = {
   logout: () => void;
 };
 
+type DecodedToken = {
+  exp: number;
+};
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 type AuthProviderProps = {
@@ -22,6 +27,31 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<AuthContextType["user"]>(null);
   const [token, setToken] = useState<string | null>(null);
+
+  const isTokenExpired = (jwtToken: string) => {
+    try {
+      const decoded: DecodedToken = jwtDecode(jwtToken);
+      const now = Date.now() / 1000;
+      return decoded.exp < now;
+    } catch {
+      return true;
+    }
+  };
+
+  useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+    const savedUser = localStorage.getItem("user");
+
+    if (savedToken && !isTokenExpired(savedToken)) {
+      setToken(savedToken);
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+    } else {
+      // if expired or not found, clear storage
+      logout();
+    }
+  }, []);
 
   const login = (userData: AuthContextType["user"], jwtToken: string) => {
     setUser(userData);
