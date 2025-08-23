@@ -4,11 +4,13 @@ import PlantView from "../pages/PlantView";
 import PlantFullView from "../pages/PlantFullView";
 import CreatePlant from "../pages/CreatePlant";
 import UpdatePlant from "../pages/UpdatePlant";
+import AddActivityPage from "../pages/AddActivityPage"; // 👈 import it
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/plants" replace />} />
+
       <Route
         path="/plants"
         element={
@@ -17,6 +19,7 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/plants/create"
         element={
@@ -25,6 +28,7 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/plants/update/:id"
         element={
@@ -33,6 +37,7 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/plants/:id"
         element={
@@ -41,6 +46,17 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* 👇 New Add Activity route */}
+      <Route
+        path="/plants/:plantId/add-activity"
+        element={
+          <ProtectedRoute>
+            <AddActivityPage />
+          </ProtectedRoute>
+        }
+      />
+
       <Route path="*" element={<Navigate to="/plants" replace />} />
     </Routes>
   );

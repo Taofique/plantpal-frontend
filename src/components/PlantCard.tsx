@@ -2,13 +2,20 @@ import type { TPlant } from "../types/plant";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { deletePlant } from "../api/plantService";
+import { FaCalendar } from "react-icons/fa";
+import "react-calendar/dist/Calendar.css";
 
 type PlantCardProps = {
   plant: TPlant;
-  onDelete?: (id: number) => void; // optional callback to update parent
+  onDelete?: (id: number) => void; // callback when plant is deleted
+  onAddActivity?: (plantId: number) => void; // new callback for activity
 };
 
-export default function PlantCard({ plant, onDelete }: PlantCardProps) {
+export default function PlantCard({
+  plant,
+  onDelete,
+  onAddActivity,
+}: PlantCardProps) {
   const navigate = useNavigate();
   const { token } = useAuth();
 
@@ -36,7 +43,7 @@ export default function PlantCard({ plant, onDelete }: PlantCardProps) {
       <img
         src={plant.imageUrl || "/placeholder-plant.png"}
         alt={plant.name}
-        className="w-full h-48 object-cover"
+        className="w-full h-48 object-cover border-2 border-green-300"
       />
       <div className="p-4">
         <h3 className="text-xl font-semibold text-green-800">{plant.name}</h3>
@@ -45,24 +52,37 @@ export default function PlantCard({ plant, onDelete }: PlantCardProps) {
         <p className="text-gray-500 mt-2 text-sm">
           Water Frequency: {plant.waterFrequency} times per week
         </p>
-        <div className="mt-4 flex justify-between">
+
+        <div className="mt-4 flex justify-between items-center">
           <button
             onClick={(e) => {
-              e.stopPropagation(); // prevent parent onClick
+              e.stopPropagation();
               navigate(`/plants/update/${plant.id}`);
             }}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
           >
             Edit
           </button>
+
           <button
             onClick={(e) => {
-              e.stopPropagation(); // prevent parent onClick
+              e.stopPropagation();
               handleDelete();
             }}
             className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
           >
             Delete
+          </button>
+
+          {/* New Add Activity button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onAddActivity) onAddActivity(plant.id);
+            }}
+            className="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition flex items-center"
+          >
+            <FaCalendar className="mr-2" /> Add Activity
           </button>
         </div>
       </div>

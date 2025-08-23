@@ -1,4 +1,3 @@
-// src/pages/PlantView.tsx
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getAllPlants } from "../api/plantService";
@@ -35,6 +34,12 @@ export default function PlantView() {
     fetchPlants();
   }, [token, navigate]);
 
+  // ✅ New callback for Add Activity
+  const handleAddActivity = (plantId: number) => {
+    // For now, just navigate to a dedicated page (later we can add a popup calendar)
+    navigate(`/plants/${plantId}/add-activity`);
+  };
+
   if (loading)
     return (
       <p className="text-center mt-10 text-green-900 font-medium">
@@ -66,6 +71,7 @@ export default function PlantView() {
               onDelete={(id) =>
                 setPlants((prevPlants) => prevPlants.filter((p) => p.id !== id))
               }
+              onAddActivity={handleAddActivity} // ✅ pass callback here
             />
           ))}
         </div>
