@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { getAllPlants } from "../api/plantService";
 import type { TPlant } from "../types/plant";
 import PlantCard from "../components/PlantCard";
+import ActivityModal from "../components/ActivityModal";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -13,6 +14,11 @@ export default function PlantView() {
   const [plants, setPlants] = useState<TPlant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPlantId, setSelectedPlantId] = useState<number | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     if (!token) {
@@ -34,10 +40,13 @@ export default function PlantView() {
     fetchPlants();
   }, [token, navigate]);
 
-  // ✅ New callback for Add Activity
   const handleAddActivity = (plantId: number) => {
-    // For now, just navigate to a dedicated page (later we can add a popup calendar)
     navigate(`/plants/${plantId}/add-activity`);
+  };
+
+  const handleViewActivities = (plantId: number) => {
+    setSelectedPlantId(plantId);
+    setModalOpen(true);
   };
 
   if (loading)
@@ -71,11 +80,19 @@ export default function PlantView() {
               onDelete={(id) =>
                 setPlants((prevPlants) => prevPlants.filter((p) => p.id !== id))
               }
-              onAddActivity={handleAddActivity} // ✅ pass callback here
+              onAddActivity={handleAddActivity}
+              onViewActivities={handleViewActivities} // ✅ pass callback here
             />
           ))}
         </div>
       </motion.div>
+
+      {/* Activity Modal */}
+      <ActivityModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        plantId={selectedPlantId}
+      />
     </div>
   );
 }

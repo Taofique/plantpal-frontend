@@ -5,11 +5,13 @@ import "react-calendar/dist/Calendar.css";
 import { getPlantById } from "../api/plantService";
 import type { TPlant } from "../types/plant";
 import { useAuth } from "../context/AuthContext";
+import { createActivity } from "../api/activityService";
+import type { TActivityCreateInput } from "../types/activity";
 
 export default function AddActivityPage() {
   const { plantId } = useParams<{ plantId: string }>();
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const { token, user } = useAuth(); // assume user object contains userId
 
   const [date, setDate] = useState<Date>(new Date());
   const [title, setTitle] = useState("");
@@ -36,25 +38,33 @@ export default function AddActivityPage() {
     fetchPlant();
   }, [plantId, token]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log({
-      plantId,
+    if (!plantId || !token || !user?.id) return;
+
+    const newActivity: TActivityCreateInput = {
+      userId: user.id, // keep userId here
+      plantId: Number(plantId),
       title,
       type,
       notes: notes || null,
-      dueAt: date,
-    });
+      dueAt: date.toISOString(),
+    };
 
-    alert("Activity created (mock). We’ll connect to backend next!");
-    navigate("/plants");
+    try {
+      await createActivity(newActivity, token);
+      alert("Activity created successfully!");
+      navigate(`/plants/${plantId}`); // go back to plant detail
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Failed to create activity");
+    }
   };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        Loading...
+        Loading plant details...
       </div>
     );
   }
@@ -102,7 +112,9 @@ export default function AddActivityPage() {
             </label>
             <select
               value={type}
-              onChange={(e) => setType(e.target.value as any)}
+              onChange={(e) =>
+                setType(e.target.value as TActivityCreateInput["type"])
+              }
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
             >
               <option value="water">Water</option>

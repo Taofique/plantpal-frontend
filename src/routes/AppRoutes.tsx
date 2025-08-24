@@ -4,7 +4,8 @@ import PlantView from "../pages/PlantView";
 import PlantFullView from "../pages/PlantFullView";
 import CreatePlant from "../pages/CreatePlant";
 import UpdatePlant from "../pages/UpdatePlant";
-import AddActivityPage from "../pages/AddActivityPage"; // 👈 import it
+import AddActivityPage from "../pages/AddActivityPage";
+import ActivityFullListPage from "../pages/ActivityFullListPage";
 
 export default function AppRoutes() {
   return (
@@ -47,7 +48,7 @@ export default function AppRoutes() {
         }
       />
 
-      {/* 👇 New Add Activity route */}
+      {/*Activity route */}
       <Route
         path="/plants/:plantId/add-activity"
         element={
@@ -57,7 +58,14 @@ export default function AppRoutes() {
         }
       />
 
-      <Route path="*" element={<Navigate to="/plants" replace />} />
+      <Route
+        path="/activities"
+        element={
+          <ProtectedRoute>
+            <ActivityFullListPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

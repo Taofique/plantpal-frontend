@@ -2,19 +2,21 @@ import type { TPlant } from "../types/plant";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { deletePlant } from "../api/plantService";
-import { FaCalendar } from "react-icons/fa";
+import { FaCalendar, FaList } from "react-icons/fa"; // added FaList
 import "react-calendar/dist/Calendar.css";
 
 type PlantCardProps = {
   plant: TPlant;
-  onDelete?: (id: number) => void; // callback when plant is deleted
-  onAddActivity?: (plantId: number) => void; // new callback for activity
+  onDelete?: (id: number) => void;
+  onAddActivity?: (plantId: number) => void;
+  onViewActivities?: (plantId: number) => void; // NEW callback
 };
 
 export default function PlantCard({
   plant,
   onDelete,
   onAddActivity,
+  onViewActivities, // NEW prop
 }: PlantCardProps) {
   const navigate = useNavigate();
   const { token } = useAuth();
@@ -28,7 +30,7 @@ export default function PlantCard({
 
     try {
       await deletePlant(plant.id, token);
-      if (onDelete) onDelete(plant.id); // notify parent to remove from state
+      if (onDelete) onDelete(plant.id);
     } catch (err: any) {
       console.error(err.response?.data?.message || "Failed to delete plant");
       alert(err.response?.data?.message || "Failed to delete plant");
@@ -53,7 +55,7 @@ export default function PlantCard({
           Water Frequency: {plant.waterFrequency} times per week
         </p>
 
-        <div className="mt-4 flex justify-between items-center">
+        <div className="mt-4 flex flex-wrap gap-2 justify-between items-center">
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -74,7 +76,6 @@ export default function PlantCard({
             Delete
           </button>
 
-          {/* New Add Activity button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -83,6 +84,17 @@ export default function PlantCard({
             className="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition flex items-center"
           >
             <FaCalendar className="mr-2" /> Add Activity
+          </button>
+
+          {/* NEW: View Activities button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onViewActivities) onViewActivities(plant.id);
+            }}
+            className="bg-purple-600 text-white px-3 py-2 rounded-lg hover:bg-purple-700 transition flex items-center"
+          >
+            <FaList className="mr-2" /> View Activities
           </button>
         </div>
       </div>

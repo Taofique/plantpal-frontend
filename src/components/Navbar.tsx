@@ -1,7 +1,6 @@
-// src/components/Navbar.tsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaBars, FaTimes } from "react-icons/fa";
+import { FaArrowLeft, FaBars, FaTimes, FaList } from "react-icons/fa"; // added FaList
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
@@ -14,7 +13,6 @@ export default function Navbar() {
     navigate("/login");
   };
 
-  // Don't show navbar while checking auth status
   if (token === undefined) {
     return null;
   }
@@ -30,7 +28,7 @@ export default function Navbar() {
           PlantPal
         </Link>
 
-        {/* Desktop nav (right side) */}
+        {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-4">
           {token ? (
             <>
@@ -47,9 +45,26 @@ export default function Navbar() {
               >
                 Add Plant
               </Link>
+
+              {/* Activities button */}
+              {/* <button
+                onClick={() => navigate("/activities")}
+                className="bg-purple-600 hover:bg-purple-700 px-3 py-1 rounded transition flex items-center gap-1"
+              >
+                <FaList /> Activities
+              </button> */}
+
+              <Link
+                to="/activities"
+                className="hover:bg-green-600 px-3 py-1 rounded transition"
+              >
+                All Activities
+              </Link>
+
+              {/* Logout pushed right */}
               <button
                 onClick={handleLogout}
-                className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded transition"
+                className="ml-4 bg-red-600 hover:bg-red-700 px-3 py-1 rounded transition"
               >
                 Logout
               </button>
@@ -85,21 +100,21 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Back button pinned to far-left (only if logged in) */}
+      {/* Back button */}
       {token && (
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="absolute top-1/2 left-4 -translate-y-1/2
-                     bg-white text-green-700 border border-green-300 
-                     rounded-lg px-3 py-1 hover:bg-green-100 transition 
-                     flex items-center gap-1"
+          className="hidden md:flex absolute top-1/2 left-4 -translate-y-1/2
+               bg-white text-green-700 border border-green-300 
+               rounded-lg px-3 py-1 hover:bg-green-100 transition 
+               items-center gap-1"
         >
           <FaArrowLeft /> <span className="hidden sm:inline">Back</span>
         </button>
       )}
 
-      {/* Mobile menu dropdown */}
+      {/* Mobile menu */}
       <div
         id="mobile-menu"
         className={`${
@@ -124,6 +139,16 @@ export default function Navbar() {
               >
                 Add Plant
               </Link>
+
+              {/* NEW: Activities mobile link */}
+              <Link
+                to="/activities"
+                onClick={() => setOpen(false)}
+                className="block bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded transition flex items-center gap-1"
+              >
+                <FaList /> Activities
+              </Link>
+
               <button
                 onClick={() => {
                   setOpen(false);
