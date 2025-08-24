@@ -6,6 +6,10 @@ import HomePage from "../pages/HomePage";
 export default function AuthRoutes() {
   return (
     <Routes>
+      {/* Public home page */}
+      <Route path="/" element={<HomePage />} />
+
+      {/* Authentication */}
       <Route
         path="/login"
         element={
@@ -23,10 +27,8 @@ export default function AuthRoutes() {
         }
       />
 
-      <Route path="/home" element={<HomePage />} />
-
-      <Route path="/" element={<Navigate to="/home" replace />} />
-      <Route path="*" element={<Navigate to="/home" replace />} />
+      {/* Redirect unknown paths to public home */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

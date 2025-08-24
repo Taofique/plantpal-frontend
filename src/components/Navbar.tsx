@@ -9,7 +9,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   const handleBack = () => {
-    navigate("/plants");
+    navigate("/");
   };
 
   const handleLogout = () => {
@@ -26,7 +26,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-center md:justify-between">
         {/* Brand */}
         <Link
-          to={token ? "/plants" : "/login"}
+          to={token ? "/" : "/login"}
           className="text-2xl font-bold hover:opacity-90"
         >
           PlantPal
@@ -37,6 +37,13 @@ export default function Navbar() {
           {token ? (
             <>
               <span className="text-sm">Hi, {user?.username}</span>
+
+              <Link
+                to="/"
+                className="hover:bg-green-600 px-3 py-1 rounded transition"
+              >
+                Home
+              </Link>
               <Link
                 to="/plants"
                 className="hover:bg-green-600 px-3 py-1 rounded transition"

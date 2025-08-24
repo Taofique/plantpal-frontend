@@ -3,27 +3,18 @@ import { jwtDecode } from "jwt-decode";
 import type { ReactNode } from "react";
 
 type AuthContextType = {
-  user: {
-    id: number;
-    username: string;
-    email: string;
-  } | null;
-
+  user: { id: number; username: string; email: string } | null;
   token: string | null;
   login: (user: AuthContextType["user"], token: string) => void;
   logout: () => void;
   loading: boolean;
 };
 
-type DecodedToken = {
-  exp: number;
-};
+type DecodedToken = { exp: number };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-type AuthProviderProps = {
-  children: ReactNode;
-};
+type AuthProviderProps = { children: ReactNode };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<AuthContextType["user"]>(null);
@@ -33,8 +24,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const isTokenExpired = (jwtToken: string) => {
     try {
       const decoded: DecodedToken = jwtDecode(jwtToken);
-      const now = Date.now() / 1000;
-      return decoded.exp < now;
+      return decoded.exp < Date.now() / 1000;
     } catch {
       return true;
     }
@@ -46,11 +36,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     if (savedToken && !isTokenExpired(savedToken)) {
       setToken(savedToken);
-      if (savedUser) {
-        setUser(JSON.parse(savedUser));
-      }
+      if (savedUser) setUser(JSON.parse(savedUser));
     } else {
-      // if expired or not found, clear storage
       logout();
     }
 
@@ -80,8 +67,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 };

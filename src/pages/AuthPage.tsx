@@ -1,4 +1,3 @@
-// src/pages/AuthPage.tsx
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,19 +7,17 @@ import {
   faGithub,
   faLinkedinIn,
 } from "@fortawesome/free-brands-svg-icons";
-import { useNavigate, useLocation } from "react-router-dom"; // Add useLocation
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { loginUser } from "../api/authService";
+import { loginUser, fetchUserProfile } from "../api/authService";
 import { registerUser } from "../api/userService";
-import type { TLoginInput, TAuthResponse } from "../types/auth";
+import type { TLoginInput } from "../types/auth";
 import type { TUserCreateInput } from "../types/user";
 
 export default function AuthPage() {
-  // Remove initialForm prop
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(location.pathname === "/login");
 
-  // Sync with URL changes
   useEffect(() => {
     setIsLogin(location.pathname === "/login");
   }, [location.pathname]);
@@ -60,9 +57,10 @@ function LoginForm() {
     setLoading(true);
 
     try {
-      const response: TAuthResponse = await loginUser(formData);
-      login(response.user, response.token);
-      navigate("/plants");
+      const token = await loginUser(formData);
+      const user = await fetchUserProfile(token);
+      login(user, token);
+      navigate("/");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
     } finally {
@@ -111,7 +109,6 @@ function LoginForm() {
             Sign In 🌱
           </h1>
 
-          {/* Social Icons */}
           <div className="flex justify-center space-x-4 mb-6">
             <SocialIcon icon={faGoogle} />
             <SocialIcon icon={faFacebookF} />
@@ -158,7 +155,7 @@ function LoginForm() {
             Don't have an account?{" "}
             <span
               className="text-green-700 font-semibold cursor-pointer hover:underline"
-              onClick={() => navigate("/register")} // Use navigate instead of onToggle
+              onClick={() => navigate("/register")}
             >
               Register
             </span>
@@ -171,7 +168,6 @@ function LoginForm() {
 
 function RegisterForm() {
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   const [formData, setFormData] = useState<TUserCreateInput>({
     username: "",
@@ -190,9 +186,8 @@ function RegisterForm() {
     setLoading(true);
 
     try {
-      const { user, token } = await registerUser(formData);
-      login(user, token);
-      navigate("/plants");
+      await registerUser(formData); // just register, do NOT log in automatically
+      navigate("/login"); // redirect to login page
     } catch (err: any) {
       setError(err.response?.data?.message || "Registration failed");
     } finally {
@@ -221,7 +216,6 @@ function RegisterForm() {
             Create Account 🌿
           </h1>
 
-          {/* Social Icons */}
           <div className="flex justify-center space-x-4 mb-6">
             <SocialIcon icon={faGoogle} />
             <SocialIcon icon={faFacebookF} />
@@ -271,7 +265,7 @@ function RegisterForm() {
             Already have an account?{" "}
             <span
               className="text-green-700 font-semibold cursor-pointer hover:underline"
-              onClick={() => navigate("/login")} // Use navigate instead of onToggle
+              onClick={() => navigate("/login")}
             >
               Login
             </span>

@@ -10,7 +10,7 @@ export const getPublicPlants = async (): Promise<TPlant[]> => {
   return response.data;
 };
 
-// Get all plants
+// Get all plants protected
 export const getAllPlants = async (token: string): Promise<TPlant[]> => {
   const response = await axios.get(`${API_URL}/all`, {
     headers: { Authorization: `Bearer ${token}` },

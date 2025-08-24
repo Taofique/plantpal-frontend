@@ -1,17 +1,26 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
+
+import UserHomeView from "../pages/UserHomeView";
 import PlantView from "../pages/PlantView";
 import PlantFullView from "../pages/PlantFullView";
 import CreatePlant from "../pages/CreatePlant";
 import UpdatePlant from "../pages/UpdatePlant";
 import AddActivityPage from "../pages/AddActivityPage";
 import ActivityFullListPage from "../pages/ActivityFullListPage";
-import HomePage from "../pages/HomePage";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      {/* Dashboard / landing page after login */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <UserHomeView />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/plants"
@@ -49,7 +58,6 @@ export default function AppRoutes() {
         }
       />
 
-      {/*Activity route */}
       <Route
         path="/plants/:plantId/add-activity"
         element={
@@ -67,6 +75,9 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* fallback: redirect any unknown path in protected routes */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
