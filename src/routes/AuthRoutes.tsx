@@ -1,4 +1,3 @@
-// src/routes/AuthRoutes.tsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
 import AuthPage from "../pages/AuthPage";

@@ -1,4 +1,3 @@
-// src/App.tsx
 import { BrowserRouter as Router } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
@@ -8,10 +7,9 @@ import AuthRoutes from "./routes/AuthRoutes";
 import { useAuth } from "./context/AuthContext";
 
 function RouterSelector() {
-  const { token } = useAuth();
+  const { token, loading } = useAuth();
 
-  // Show loading state while checking authentication
-  if (token === undefined) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         Loading...

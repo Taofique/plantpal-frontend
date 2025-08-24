@@ -8,6 +8,10 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
+  const handleBack = () => {
+    navigate("/plants");
+  };
+
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -104,11 +108,11 @@ export default function Navbar() {
       {token && (
         <button
           type="button"
-          onClick={() => navigate(-1)}
+          onClick={handleBack}
           className="hidden md:flex absolute top-1/2 left-4 -translate-y-1/2
-               bg-white text-green-700 border border-green-300 
-               rounded-lg px-3 py-1 hover:bg-green-100 transition 
-               items-center gap-1"
+           bg-white text-green-700 border border-green-300 
+           rounded-lg px-3 py-1 hover:bg-green-100 transition 
+           items-center gap-1"
         >
           <FaArrowLeft /> <span className="hidden sm:inline">Back</span>
         </button>

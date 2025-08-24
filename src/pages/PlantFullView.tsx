@@ -1,6 +1,6 @@
 // src/pages/PlantFullView.tsx
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getPlantById } from "../api/plantService";
 import {
@@ -11,22 +11,21 @@ import type { TPlant } from "../types/plant";
 import type { TActivity } from "../types/activity";
 import { FaArrowLeft } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { formatLocalDate } from "../utils/formatDate";
 
 export default function PlantFullView() {
   const { id } = useParams<{ id: string }>();
-  const { token } = useAuth();
+  const { token, loading } = useAuth();
   const navigate = useNavigate();
 
   const [plant, setPlant] = useState<TPlant | null>(null);
   const [activities, setActivities] = useState<TActivity[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [fetching, setFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+    if (loading) return; // wait for AuthContext to finish
+    if (!token) return; // don't fetch if not authenticated
 
     const fetchData = async () => {
       try {
@@ -38,14 +37,14 @@ export default function PlantFullView() {
           setActivities(activityData);
         }
       } catch (err: any) {
-        setError(err.response?.data?.message || "Failed to fetch plant data");
+        setError(err?.response?.data?.message || "Failed to fetch plant data");
       } finally {
-        setLoading(false);
+        setFetching(false);
       }
     };
 
     fetchData();
-  }, [id, token, navigate]);
+  }, [id, token, loading]); // no need for `navigate` in deps
 
   const handleComplete = async (activityId: number) => {
     if (!token) return;
@@ -63,9 +62,14 @@ export default function PlantFullView() {
     }
   };
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  // ---- GUARDS (order matters) ----
+  if (loading)
+    return <p className="text-center mt-10">Checking authentication...</p>;
+  if (!token) return <Navigate to="/login" replace />; // <-- relies on your router having /login
+  if (fetching) return <p className="text-center mt-10">Loading...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
   if (!plant) return <p className="text-center mt-10">Plant not found</p>;
+  // --------------------------------
 
   return (
     <div className="min-h-screen bg-green-50 p-6 md:p-12 flex justify-center">
@@ -123,7 +127,7 @@ export default function PlantFullView() {
           </motion.div>
         </div>
 
-        {/* ✅ Activities Section */}
+        {/* Activities Section */}
         <div className="p-6 bg-white rounded-xl m-4 shadow-md">
           <h2 className="text-2xl font-bold text-green-800 mb-4">
             Activities 🌱
@@ -152,6 +156,9 @@ export default function PlantFullView() {
                         {activity.notes}
                       </span>
                     )}
+                    <span className="text-sm text-gray-600 italic">
+                      Activity Due: {formatLocalDate(activity.dueAt)}
+                    </span>
                   </div>
                   <input
                     type="checkbox"

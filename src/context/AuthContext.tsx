@@ -12,6 +12,7 @@ type AuthContextType = {
   token: string | null;
   login: (user: AuthContextType["user"], token: string) => void;
   logout: () => void;
+  loading: boolean;
 };
 
 type DecodedToken = {
@@ -27,6 +28,7 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<AuthContextType["user"]>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const isTokenExpired = (jwtToken: string) => {
     try {
@@ -51,6 +53,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // if expired or not found, clear storage
       logout();
     }
+
+    setLoading(false);
   }, []);
 
   const login = (userData: AuthContextType["user"], jwtToken: string) => {
@@ -68,7 +72,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
