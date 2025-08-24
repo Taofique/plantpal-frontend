@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import PageTransition from "../components/PageTransition";
 import AuthPage from "../pages/AuthPage";
+import HomePage from "../pages/HomePage";
 
 export default function AuthRoutes() {
   return (
@@ -21,7 +22,11 @@ export default function AuthRoutes() {
           </PageTransition>
         }
       />
-      <Route path="*" element={<Navigate to="/login" replace />} />
+
+      <Route path="/home" element={<HomePage />} />
+
+      <Route path="/" element={<Navigate to="/home" replace />} />
+      <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   );
 }

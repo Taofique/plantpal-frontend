@@ -76,6 +76,12 @@ export default function Navbar() {
           ) : (
             <>
               <Link
+                to="/"
+                className="hover:bg-green-600 px-3 py-1 rounded transition"
+              >
+                Home
+              </Link>
+              <Link
                 to="/login"
                 className="hover:bg-green-600 px-3 py-1 rounded transition"
               >

@@ -1,19 +1,24 @@
-// src/api/plantService.ts
 import axios from "axios";
 import type { TPlant, TPlantCreateInput } from "../types/plant";
 
 const API_URL = "http://localhost:8080/plants";
 
-// Get all plants (protected route)
+// Get all plant public
+
+export const getPublicPlants = async (): Promise<TPlant[]> => {
+  const response = await axios.get(`${API_URL}/public`);
+  return response.data;
+};
+
+// Get all plants
 export const getAllPlants = async (token: string): Promise<TPlant[]> => {
   const response = await axios.get(`${API_URL}/all`, {
-    // FIXED: Added /all
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
 };
 
-// Get a single plant by ID (protected route)
+// Get a single plant by ID
 export const getPlantById = async (
   id: number,
   token: string
@@ -24,7 +29,7 @@ export const getPlantById = async (
   return response.data;
 };
 
-// Create a new plant (protected route)
+// Create a new plant
 export const createPlant = async (
   data: TPlantCreateInput,
   token: string
@@ -36,7 +41,7 @@ export const createPlant = async (
   return response.data;
 };
 
-// Update a plant by ID (protected route)
+// Update a plant by ID
 export const updatePlant = async (
   id: number,
   data: Partial<TPlantCreateInput>,
@@ -48,7 +53,7 @@ export const updatePlant = async (
   return response.data;
 };
 
-// Delete a plant by ID (protected route)
+// Delete a plant by ID
 export const deletePlant = async (id: number, token: string): Promise<void> => {
   await axios.delete(`${API_URL}/${id}`, {
     headers: { Authorization: `Bearer ${token}` },

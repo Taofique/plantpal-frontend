@@ -6,11 +6,12 @@ import CreatePlant from "../pages/CreatePlant";
 import UpdatePlant from "../pages/UpdatePlant";
 import AddActivityPage from "../pages/AddActivityPage";
 import ActivityFullListPage from "../pages/ActivityFullListPage";
+import HomePage from "../pages/HomePage";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/plants" replace />} />
+      <Route path="/" element={<HomePage />} />
 
       <Route
         path="/plants"
