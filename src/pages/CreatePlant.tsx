@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { createPlant } from "../api/plantService";
 import type { TPlantCreateInput } from "../types/plant";
 import { useAuth } from "../context/AuthContext";
-import { FaArrowLeft } from "react-icons/fa";
+// import { FaArrowLeft } from "react-icons/fa";
 
 export default function CreatePlant() {
   const navigate = useNavigate();
