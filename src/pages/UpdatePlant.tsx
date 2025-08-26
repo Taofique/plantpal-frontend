@@ -1,4 +1,3 @@
-// src/pages/UpdatePlant.tsx
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getPlantById, updatePlant } from "../api/plantService";
@@ -16,6 +15,7 @@ export default function UpdatePlant() {
     category: "",
     waterFrequency: 0,
     imageUrl: "",
+    userId: null,
   });
 
   const [loading, setLoading] = useState(true);
@@ -34,6 +34,7 @@ export default function UpdatePlant() {
           category: plant.category,
           waterFrequency: plant.waterFrequency,
           imageUrl: plant.imageUrl,
+          userId: plant.userId,
         });
       } catch (err: any) {
         setError(err.response?.data?.message || "Failed to fetch plant");

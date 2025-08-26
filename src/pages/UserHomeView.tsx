@@ -11,12 +11,17 @@ import type { TComment } from "../types/comment";
 import CommentForm from "../components/CommentForm";
 import { useAuth } from "../context/AuthContext";
 
+const PAGE_SIZE = 5;
+
 export default function UserHomeView() {
   const [plants, setPlants] = useState<TPlant[]>([]);
+  const [visiblePlants, setVisiblePlants] = useState<TPlant[]>([]);
+  const [fadeInMap, setFadeInMap] = useState<Record<number, boolean>>({});
   const [commentsMap, setCommentsMap] = useState<Record<number, TComment[]>>(
     {}
   );
   const [expandedMap, setExpandedMap] = useState<Record<number, boolean>>({});
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { user, token } = useAuth();
 
@@ -28,10 +33,29 @@ export default function UserHomeView() {
     try {
       const data = await getPublicPlants();
       setPlants(data);
-      data.forEach((plant) => fetchComments(plant.id));
+      const initialPlants = data.slice(0, PAGE_SIZE);
+      setVisiblePlants(initialPlants);
+      initialPlants.forEach((plant) => fetchComments(plant.id));
+
+      // trigger fade-in for initial plants
+      const fadeMap: Record<number, boolean> = {};
+      initialPlants.forEach((p) => (fadeMap[p.id] = true));
+      setFadeInMap(fadeMap);
     } catch (err) {
       console.error("Failed to fetch plants", err);
     }
+  };
+
+  const showMorePlants = () => {
+    const nextPage = currentPage + 1;
+    const newVisible = plants.slice(0, nextPage * PAGE_SIZE);
+    setVisiblePlants(newVisible);
+    setCurrentPage(nextPage);
+
+    // fade-in newly added plants
+    const newFadeMap = { ...fadeInMap };
+    newVisible.forEach((p) => (newFadeMap[p.id] = true));
+    setFadeInMap(newFadeMap);
   };
 
   const fetchComments = async (plantId: number) => {
@@ -111,10 +135,12 @@ export default function UserHomeView() {
   return (
     <div className="bg-green-100 min-h-screen flex justify-center">
       <div className="w-full max-w-xl p-4 flex flex-col gap-6">
-        {plants.map((plant) => (
+        {visiblePlants.map((plant) => (
           <div
             key={plant.id}
-            className="border-2 border-green-500 rounded-2xl shadow-md bg-white overflow-hidden"
+            className={`border-2 border-green-500 rounded-2xl shadow-md bg-white overflow-hidden transform transition-opacity duration-500 ${
+              fadeInMap[plant.id] ? "opacity-100" : "opacity-0"
+            }`}
           >
             {/* Plant Image */}
             <img
@@ -176,7 +202,6 @@ export default function UserHomeView() {
                           </span>
                         )}
 
-                        {/* Edit & Delete logic */}
                         {(c.userId === user?.id ||
                           plant.userId === user?.id) && (
                           <div className="flex items-center gap-1">
@@ -211,6 +236,16 @@ export default function UserHomeView() {
             </div>
           </div>
         ))}
+
+        {/* Show More Button */}
+        {visiblePlants.length < plants.length && (
+          <button
+            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition self-center mt-4"
+            onClick={showMorePlants}
+          >
+            Show More
+          </button>
+        )}
       </div>
     </div>
   );

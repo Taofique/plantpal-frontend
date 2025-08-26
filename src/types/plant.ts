@@ -7,7 +7,7 @@ export type TPlant = {
   imageUrl?: string; // URL of the plant image
   createdAt?: Date;
   updatedAt?: Date;
-  userId: number;
+  userId?: number | null;
 };
 
 export type TPlantCreateInput = Omit<TPlant, "id" | "createdAt" | "updatedAt">;
