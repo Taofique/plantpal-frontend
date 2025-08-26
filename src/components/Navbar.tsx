@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaBars, FaTimes, FaList } from "react-icons/fa"; // added FaList
+import { FaArrowLeft, FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
@@ -8,23 +8,19 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-  const handleBack = () => {
-    navigate("/");
-  };
-
+  const handleBack = () => navigate("/");
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
-  if (token === undefined) {
-    return null;
-  }
+  if (token === undefined) return null; // Wait until auth is loaded
 
   return (
-    <nav className="bg-green-700 text-white shadow-md sticky top-0 z-40 relative">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-center md:justify-between">
-        {/* Brand */}
+    <nav className="bg-green-700 text-white shadow-md sticky top-0 z-40">
+      {/* Container */}
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center">
+        {/* Brand / Logo */}
         <Link
           to={token ? "/" : "/login"}
           className="text-2xl font-bold hover:opacity-90"
@@ -32,71 +28,53 @@ export default function Navbar() {
           PlantPal
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* Desktop navigation */}
+        <div className="hidden md:flex items-center gap-4 ml-auto">
           {token ? (
             <>
               <span className="text-sm">Hi, {user?.username}</span>
-
-              <Link
-                to="/"
-                className="hover:bg-green-600 px-3 py-1 rounded transition"
-              >
+              <Link to="/" className="hover:bg-green-600 px-3 py-1 rounded">
                 Home
               </Link>
               <Link
-                to="/plants"
-                className="hover:bg-green-600 px-3 py-1 rounded transition"
+                to="/plants/logged_user"
+                className="hover:bg-green-600 px-3 py-1 rounded"
               >
                 Plants
               </Link>
               <Link
                 to="/plants/create"
-                className="hover:bg-green-600 px-3 py-1 rounded transition"
+                className="hover:bg-green-600 px-3 py-1 rounded"
               >
                 Add Plant
               </Link>
-
-              {/* Activities button */}
-              {/* <button
-                onClick={() => navigate("/activities")}
-                className="bg-purple-600 hover:bg-purple-700 px-3 py-1 rounded transition flex items-center gap-1"
-              >
-                <FaList /> Activities
-              </button> */}
-
               <Link
                 to="/activities"
-                className="hover:bg-green-600 px-3 py-1 rounded transition"
+                className="hover:bg-green-600 px-3 py-1 rounded"
               >
                 All Activities
               </Link>
-
-              {/* Logout pushed right */}
               <button
                 onClick={handleLogout}
-                className="ml-4 bg-red-600 hover:bg-red-700 px-3 py-1 rounded transition"
+                className="ml-4 bg-red-500 hover:bg-red-700 px-3 py-1 rounded transition"
               >
                 Logout
               </button>
             </>
           ) : (
             <>
-              <Link
-                to="/"
-                className="hover:bg-green-600 px-3 py-1 rounded transition"
-              >
+              <Link to="/" className="hover:bg-green-600 px-3 py-1 rounded">
                 Home
               </Link>
               <Link
                 to="/login"
-                className="hover:bg-green-600 px-3 py-1 rounded transition"
+                className="hover:bg-green-600 px-3 py-1 rounded"
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="hover:bg-green-600 px-3 py-1 rounded transition"
+                className="hover:bg-green-600 px-3 py-1 rounded"
               >
                 Register
               </Link>
@@ -104,11 +82,11 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile hamburger */}
+        {/* Mobile hamburger / cross button */}
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="md:hidden p-2 rounded hover:bg-green-600 transition absolute right-4 top-1/2 -translate-y-1/2"
+          className="md:hidden ml-auto p-2 rounded hover:bg-green-600 transition"
           aria-label="Toggle navigation menu"
           aria-expanded={open}
           aria-controls="mobile-menu"
@@ -117,7 +95,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Back button */}
+      {/* Back button for desktop only */}
       {token && (
         <button
           type="button"
@@ -143,35 +121,39 @@ export default function Navbar() {
             <>
               <div className="text-sm opacity-90">Hi, {user?.username}</div>
               <Link
-                to="/plants"
+                to="/"
                 onClick={() => setOpen(false)}
-                className="block hover:bg-green-600 px-3 py-2 rounded transition"
+                className="block hover:bg-green-600 px-3 py-2 rounded"
+              >
+                Home
+              </Link>
+              <Link
+                to="/plants/logged_user"
+                onClick={() => setOpen(false)}
+                className="block hover:bg-green-600 px-3 py-2 rounded"
               >
                 Plants
               </Link>
               <Link
                 to="/plants/create"
                 onClick={() => setOpen(false)}
-                className="block hover:bg-green-600 px-3 py-2 rounded transition"
+                className="block hover:bg-green-600 px-3 py-2 rounded"
               >
                 Add Plant
               </Link>
-
-              {/* NEW: Activities mobile link */}
               <Link
                 to="/activities"
                 onClick={() => setOpen(false)}
-                className="block bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded transition flex items-center gap-1"
+                className="block hover:bg-green-600 px-3 py-2 rounded"
               >
-                <FaList /> Activities
+                Activities
               </Link>
-
               <button
                 onClick={() => {
                   setOpen(false);
                   handleLogout();
                 }}
-                className="w-full text-left bg-red-600 hover:bg-red-700 px-3 py-2 rounded transition"
+                className="w-full text-left bg-red-500 hover:bg-red-700 px-3 py-2 rounded"
               >
                 Logout
               </button>
@@ -179,16 +161,24 @@ export default function Navbar() {
           ) : (
             <>
               <Link
+                to="/"
+                onClick={() => setOpen(false)}
+                className="block hover:bg-green-600 px-3 py-2 rounded"
+              >
+                Home
+              </Link>
+
+              <Link
                 to="/login"
                 onClick={() => setOpen(false)}
-                className="block hover:bg-green-600 px-3 py-2 rounded transition"
+                className="block hover:bg-green-600 px-3 py-2 rounded"
               >
                 Login
               </Link>
               <Link
                 to="/register"
                 onClick={() => setOpen(false)}
-                className="block hover:bg-green-600 px-3 py-2 rounded transition"
+                className="block hover:bg-green-600 px-3 py-2 rounded"
               >
                 Register
               </Link>

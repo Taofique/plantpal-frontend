@@ -16,7 +16,6 @@ function RouterSelector() {
     );
   }
 
-  // Show protected routes only if user is logged in
   return token ? <AppRoutes /> : <AuthRoutes />;
 }
 

@@ -46,7 +46,6 @@ function SkeletonCard() {
 function PlantCard({ plant }: { plant: TPlant }) {
   const [loaded, setLoaded] = useState(false);
 
-  // Fallback image if missing
   const src = plant.imageUrl || "/placeholder-plant.png";
   const alt = plant.name ? `Photo of ${plant.name}` : "Plant photo";
 

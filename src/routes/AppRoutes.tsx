@@ -8,6 +8,7 @@ import CreatePlant from "../pages/CreatePlant";
 import UpdatePlant from "../pages/UpdatePlant";
 import AddActivityPage from "../pages/AddActivityPage";
 import ActivityFullListPage from "../pages/ActivityFullListPage";
+import ModernMonthCalendar from "../components/ModernMonthCalendar";
 
 export default function AppRoutes() {
   return (
@@ -23,7 +24,7 @@ export default function AppRoutes() {
       />
 
       <Route
-        path="/plants"
+        path="/plants/logged_user"
         element={
           <ProtectedRoute>
             <PlantView />

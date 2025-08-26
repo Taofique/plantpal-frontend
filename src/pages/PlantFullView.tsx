@@ -44,7 +44,7 @@ export default function PlantFullView() {
     };
 
     fetchData();
-  }, [id, token, loading]); // no need for `navigate` in deps
+  }, [id, token, loading]);
 
   const handleComplete = async (activityId: number) => {
     if (!token) return;
@@ -62,7 +62,6 @@ export default function PlantFullView() {
     }
   };
 
-  // ---- GUARDS (order matters) ----
   if (loading)
     return <p className="text-center mt-10">Checking authentication...</p>;
   if (!token) return <Navigate to="/login" replace />; // <-- relies on your router having /login

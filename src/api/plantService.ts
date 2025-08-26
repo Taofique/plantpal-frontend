@@ -29,6 +29,20 @@ export const getPlantById = async (
   return response.data;
 };
 
+export const getAllPlantsByUserId = async (
+  token: string
+): Promise<TPlant[]> => {
+  try {
+    const response = await axios.get<TPlant[]>(`${API_URL}/all/user`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch user's plants", error);
+    throw error;
+  }
+};
+
 // Create a new plant
 export const createPlant = async (
   data: TPlantCreateInput,

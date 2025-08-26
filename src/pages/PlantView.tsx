@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { getAllPlants } from "../api/plantService";
+import { getAllPlantsByUserId } from "../api/plantService";
 import type { TPlant } from "../types/plant";
 import PlantCard from "../components/PlantCard";
 import ActivityModal from "../components/ActivityModal";
@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export default function PlantView() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const navigate = useNavigate();
 
   const [plants, setPlants] = useState<TPlant[]>([]);
@@ -21,14 +21,14 @@ export default function PlantView() {
   );
 
   useEffect(() => {
-    if (!token) {
+    if (!token || !user) {
       navigate("/login");
       return;
     }
 
     const fetchPlants = async () => {
       try {
-        const data = await getAllPlants(token);
+        const data = await getAllPlantsByUserId(token);
         setPlants(data);
       } catch (err: any) {
         setError(err.response?.data?.message || "Failed to fetch plants");
@@ -38,7 +38,7 @@ export default function PlantView() {
     };
 
     fetchPlants();
-  }, [token, navigate]);
+  }, [token, user, navigate]);
 
   const handleAddActivity = (plantId: number) => {
     navigate(`/plants/${plantId}/add-activity`);
@@ -81,7 +81,7 @@ export default function PlantView() {
                 setPlants((prevPlants) => prevPlants.filter((p) => p.id !== id))
               }
               onAddActivity={handleAddActivity}
-              onViewActivities={handleViewActivities} // ✅ pass callback here
+              onViewActivities={handleViewActivities}
             />
           ))}
         </div>

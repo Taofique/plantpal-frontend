@@ -5,7 +5,6 @@ export type TUser = {
   password: string;
   createdAt?: Date;
   updatedAt?: Date;
-  likedByUser?: boolean;
 };
 
 export type TUserCreateInput = Omit<TUser, "id" | "createdAt" | "updatedAt">;

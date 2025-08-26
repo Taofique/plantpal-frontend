@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPublicPlants } from "../api/plantService";
+import { getAllPlants } from "../api/plantService";
 import type { TPlant } from "../types/plant";
 import {
   getCommentsByPlant,
@@ -13,9 +13,12 @@ import { useAuth } from "../context/AuthContext";
 
 const PAGE_SIZE = 5;
 
+// Extend TPlant with username
+type TPlantWithUsername = TPlant & { username: string };
+
 export default function UserHomeView() {
-  const [plants, setPlants] = useState<TPlant[]>([]);
-  const [visiblePlants, setVisiblePlants] = useState<TPlant[]>([]);
+  const [plants, setPlants] = useState<TPlantWithUsername[]>([]);
+  const [visiblePlants, setVisiblePlants] = useState<TPlantWithUsername[]>([]);
   const [fadeInMap, setFadeInMap] = useState<Record<number, boolean>>({});
   const [commentsMap, setCommentsMap] = useState<Record<number, TComment[]>>(
     {}
@@ -27,17 +30,30 @@ export default function UserHomeView() {
 
   useEffect(() => {
     fetchPlants();
-  }, []);
+  }, [token]);
 
+  // ---------------- Fetch Plants ---------------- //
   const fetchPlants = async () => {
+    if (!token) {
+      console.warn("No token, cannot fetch plants");
+      return;
+    }
+
     try {
-      const data = await getPublicPlants();
+      const dataFromAPI: TPlant[] = await getAllPlants(token);
+
+      // Map API data to include username (required by frontend type)
+      const data: TPlantWithUsername[] = dataFromAPI.map((plant) => ({
+        ...plant,
+        username: (plant as any).username || user?.username || "Unknown",
+      }));
+
       setPlants(data);
+
       const initialPlants = data.slice(0, PAGE_SIZE);
       setVisiblePlants(initialPlants);
       initialPlants.forEach((plant) => fetchComments(plant.id));
 
-      // trigger fade-in for initial plants
       const fadeMap: Record<number, boolean> = {};
       initialPlants.forEach((p) => (fadeMap[p.id] = true));
       setFadeInMap(fadeMap);
@@ -46,18 +62,19 @@ export default function UserHomeView() {
     }
   };
 
+  // ---------------- Pagination ---------------- //
   const showMorePlants = () => {
     const nextPage = currentPage + 1;
     const newVisible = plants.slice(0, nextPage * PAGE_SIZE);
     setVisiblePlants(newVisible);
     setCurrentPage(nextPage);
 
-    // fade-in newly added plants
     const newFadeMap = { ...fadeInMap };
     newVisible.forEach((p) => (newFadeMap[p.id] = true));
     setFadeInMap(newFadeMap);
   };
 
+  // ---------------- Comments ---------------- //
   const fetchComments = async (plantId: number) => {
     if (!token) return;
     try {
@@ -132,27 +149,37 @@ export default function UserHomeView() {
     setExpandedMap((prev) => ({ ...prev, [plantId]: !prev[plantId] }));
   };
 
+  // ---------------- JSX ---------------- //
   return (
-    <div className="bg-green-100 min-h-screen flex justify-center">
-      <div className="w-full max-w-xl p-4 flex flex-col gap-6">
+    <div className="bg-green-50 min-h-screen flex justify-center py-8">
+      <div className="w-full max-w-3xl flex flex-col gap-6 px-2 md:px-4">
         {visiblePlants.map((plant) => (
           <div
             key={plant.id}
-            className={`border-2 border-green-500 rounded-2xl shadow-md bg-white overflow-hidden transform transition-opacity duration-500 ${
-              fadeInMap[plant.id] ? "opacity-100" : "opacity-0"
-            }`}
+            className={`bg-white rounded-xl shadow-lg overflow-hidden transform transition-opacity duration-500 hover:scale-105`}
           >
+            {/* Username */}
+            <div className="px-4 pt-3 flex items-center justify-start">
+              <span className="font-semibold text-sm text-green-800 bg-green-100 px-3 py-1 rounded-full border border-green-200">
+                {plant.username}
+              </span>
+            </div>
+
             {/* Plant Image */}
-            <img
-              src={plant.imageUrl}
-              alt={plant.name}
-              className="border border-green-500 w-full h-auto max-h-[500px] object-cover"
-            />
+            <div className="w-full h-60 md:h-72 mt-2 px-4">
+              <img
+                src={plant.imageUrl}
+                alt={plant.name}
+                className="w-full h-full object-contain rounded-xl border border-green-200 shadow-sm"
+              />
+            </div>
 
             {/* Plant Content */}
             <div className="p-4 flex flex-col gap-2">
-              <h3 className="font-bold text-lg">{plant.name}</h3>
-              <p className="text-sm text-gray-700">{plant.description}</p>
+              <h3 className="font-bold text-lg text-green-800">{plant.name}</h3>
+              <p className="text-sm text-gray-700 line-clamp-3">
+                {plant.description}
+              </p>
 
               {/* Comment Form */}
               <CommentForm
@@ -164,9 +191,9 @@ export default function UserHomeView() {
                 }
               />
 
-              {/* Expand / Collapse button */}
+              {/* Expand / Collapse */}
               <button
-                className="text-blue-500 text-sm mt-2"
+                className="text-green-600 text-sm mt-2 hover:underline"
                 onClick={() => toggleComments(plant.id)}
               >
                 {expandedMap[plant.id] ? "Hide comments" : "View comments"}
@@ -174,7 +201,7 @@ export default function UserHomeView() {
 
               {/* Comments List */}
               {expandedMap[plant.id] && (
-                <ul className="mt-2 flex flex-col gap-2 max-h-64 overflow-y-auto">
+                <ul className="mt-2 flex flex-col gap-2 max-h-56 overflow-y-auto">
                   {(commentsMap[plant.id] || []).map((c) => (
                     <li
                       key={c.id}
