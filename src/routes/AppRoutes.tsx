@@ -8,12 +8,12 @@ import CreatePlant from "../pages/CreatePlant";
 import UpdatePlant from "../pages/UpdatePlant";
 import AddActivityPage from "../pages/AddActivityPage";
 import ActivityFullListPage from "../pages/ActivityFullListPage";
-import ModernMonthCalendar from "../components/ModernMonthCalendar";
+// import ModernMonthCalendar from "../components/ModernMonthCalendar";
+import PlantPreviewView from "../pages/PlantPreview";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Dashboard / landing page after login */}
       <Route
         path="/"
         element={
@@ -31,6 +31,8 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      <Route path="/plants/preview/:id" element={<PlantPreviewView />} />
 
       <Route
         path="/plants/create"

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import PlantSearchBox from "./PlantSearchBox";
 
 export default function Navbar() {
   const { user, token, logout } = useAuth();
@@ -30,6 +31,7 @@ export default function Navbar() {
 
         {/* Desktop navigation */}
         <div className="hidden md:flex items-center gap-4 ml-auto">
+          <PlantSearchBox className="mr-3" />
           {token ? (
             <>
               <span className="text-sm">Hi, {user?.username}</span>

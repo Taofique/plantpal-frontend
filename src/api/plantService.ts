@@ -29,6 +29,13 @@ export const getPlantById = async (
   return response.data;
 };
 
+// Get a single plant by ID public
+
+export const getPlantByIdPublic = async (id: number): Promise<TPlant> => {
+  const response = await axios.get(`${API_URL}/public/${id}`);
+  return response.data;
+};
+
 export const getAllPlantsByUserId = async (
   token: string
 ): Promise<TPlant[]> => {
