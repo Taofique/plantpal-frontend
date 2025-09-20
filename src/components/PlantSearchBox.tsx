@@ -17,6 +17,9 @@ export default function PlantSearchBox({
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const apiBaseUrl =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000"; // fallback for dev
+
   useEffect(() => {
     const fetchResults = async () => {
       if (!query.trim()) {
@@ -27,9 +30,7 @@ export default function PlantSearchBox({
       setLoading(true);
       try {
         const res = await fetch(
-          `http://localhost:8080/plants/search?q=${encodeURIComponent(
-            query
-          )}&limit=5`
+          `${apiBaseUrl}/plants/search?q=${encodeURIComponent(query)}&limit=5`
         );
         const data = await res.json();
         setResults(data);
@@ -43,7 +44,7 @@ export default function PlantSearchBox({
 
     const delay = setTimeout(fetchResults, 300);
     return () => clearTimeout(delay);
-  }, [query]);
+  }, [query, apiBaseUrl]);
 
   return (
     <div className={`relative ${className}`} style={{ minWidth: 220 }}>
