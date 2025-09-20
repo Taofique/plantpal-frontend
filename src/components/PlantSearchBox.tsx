@@ -17,8 +17,7 @@ export default function PlantSearchBox({
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const apiBaseUrl =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000"; // fallback for dev
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL; // fallback for dev
 
   useEffect(() => {
     const fetchResults = async () => {
