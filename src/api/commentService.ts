@@ -2,7 +2,8 @@
 import axios from "axios";
 import type { TComment, TCommentCreateInput } from "../types/comment";
 
-const API_URL = "http://localhost:8080/comments";
+// const API_URL = "http://localhost:8080/comments";
+const API_URL = import.meta.env.VITE_API_URL + "/comments";
 
 // Get all comments for a plant
 export const getCommentsByPlant = async (

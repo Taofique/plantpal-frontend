@@ -1,7 +1,8 @@
 import axios from "axios";
 import type { TActivity, TActivityCreateInput } from "../types/activity";
 
-const API_URL = "http://localhost:8080/activities";
+// const API_URL = "http://localhost:8080/activities";
+const API_URL = import.meta.env.VITE_API_URL + "/activities";
 
 // Create a new activity
 export const createActivity = async (

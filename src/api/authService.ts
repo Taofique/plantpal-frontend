@@ -1,7 +1,8 @@
 import axios from "axios";
 import type { TLoginInput } from "../types/auth";
 
-const API_URL = "http://localhost:8080/users";
+// const API_URL = "http://localhost:8080/users";
+const API_URL = import.meta.env.VITE_API_URL + "/users";
 
 export const loginUser = async (data: TLoginInput) => {
   const response = await axios.post(`${API_URL}/login`, data);

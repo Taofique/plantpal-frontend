@@ -1,7 +1,8 @@
 import axios from "axios";
 import type { TPlant, TPlantCreateInput } from "../types/plant";
 
-const API_URL = "http://localhost:8080/plants";
+// const API_URL = "http://localhost:8080/plants";
+const API_URL = import.meta.env.VITE_API_URL + "/plants";
 
 // Get all plant public
 

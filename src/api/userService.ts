@@ -2,7 +2,8 @@ import axios from "axios";
 import type { TRegisterInput } from "../types/auth";
 import type { TUser } from "../types/user";
 
-const API_URL = "http://localhost:8080/users";
+// const API_URL = "http://localhost:8080/users";
+const API_URL = import.meta.env.VITE_API_URL + "/users";
 
 export const registerUser = async (data: TRegisterInput) => {
   const response = await axios.post(`${API_URL}/register`, data);
