@@ -2,6 +2,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { getPublicPlants } from "../api/plantService";
+import { fallbackPlants } from "../db/fallbackPlants";
 import type { TPlant } from "../types/plant";
 import type { Variants } from "framer-motion";
 
@@ -10,7 +11,6 @@ const containerVariants = {
   show: {
     opacity: 1,
     transition: {
-      // nice staggered entrance
       staggerChildren: 0.06,
     },
   },
@@ -24,7 +24,7 @@ const cardVariants: Variants = {
     scale: 1,
     transition: {
       duration: 0.4,
-      ease: "easeOut" as const, // 👈 fixes the type error
+      ease: "easeOut" as const,
     },
   },
 };
@@ -45,7 +45,6 @@ function SkeletonCard() {
 
 function PlantCard({ plant }: { plant: TPlant }) {
   const [loaded, setLoaded] = useState(false);
-
   const src = plant.imageUrl || "/placeholder-plant.png";
   const alt = plant.name ? `Photo of ${plant.name}` : "Plant photo";
 
@@ -57,7 +56,6 @@ function PlantCard({ plant }: { plant: TPlant }) {
       className="group mb-6 break-inside-avoid rounded-2xl overflow-hidden shadow-[0_6px_24px_-12px_rgba(16,185,129,0.45)] bg-white relative"
       style={{ willChange: "transform", contentVisibility: "auto" as any }}
     >
-      {/* Image wrapper gives a soft background so 'contain' looks intentional */}
       <div className="relative bg-neutral-100">
         <img
           src={src}
@@ -66,12 +64,10 @@ function PlantCard({ plant }: { plant: TPlant }) {
           onLoad={() => setLoaded(true)}
           className={[
             "w-full h-auto object-contain block",
-            // blur-up effect
             loaded ? "opacity-100 blur-0" : "opacity-80 blur-[4px]",
             "transition-all duration-500 ease-out",
           ].join(" ")}
         />
-        {/* Soft radial glow for aesthetics */}
         <div
           className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-300"
           style={{
@@ -79,7 +75,6 @@ function PlantCard({ plant }: { plant: TPlant }) {
               "radial-gradient(1200px 200px at 50% 100%, rgba(16,185,129,0.25), transparent)",
           }}
         />
-        {/* Bottom gradient name plate */}
         <div className="absolute inset-x-0 bottom-0">
           <div className="p-4">
             <div
@@ -101,25 +96,26 @@ export default function HomePage() {
 
   useEffect(() => {
     let alive = true;
+
     (async () => {
       try {
-        // ✅ Always fetch from public plants collection
+        console.log("Fetching public plants...");
         const data = await getPublicPlants();
+        console.log("Data fetched from API:", data);
 
-        if (alive) {
-          // Shuffle after fetching
-          setPlants(data);
-        }
+        // Merge fallback + DB data
+        const merged = [...fallbackPlants, ...data];
+
+        // Remove duplicates by id
+        const uniquePlants = merged.filter(
+          (plant, index, self) =>
+            index === self.findIndex((p) => p.id === plant.id),
+        );
+
+        if (alive) setPlants(uniquePlants);
       } catch (error) {
         console.error("Failed to fetch public plants, using fallback", error);
-
-        if (alive) {
-          // Fallback already handled inside getPublicPlants
-          const fallbackData = await import("../db/fallbackPlants").then(
-            (mod) => mod.fallbackPlants,
-          );
-          setPlants(fallbackData);
-        }
+        if (alive) setPlants(fallbackPlants);
       } finally {
         if (alive) setLoading(false);
       }
@@ -130,7 +126,7 @@ export default function HomePage() {
     };
   }, []);
 
-  // Optional: shuffle once for a dynamic masonry feel
+  // Optional: shuffle for dynamic layout
   const shuffled = useMemo(() => {
     if (!plants?.length) return [];
     return [...plants].sort(() => Math.random() - 0.5);
@@ -138,7 +134,6 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen">
-      {/* Subtle page background gradient */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
@@ -148,7 +143,6 @@ export default function HomePage() {
         }}
       />
 
-      {/* Page header (optional) */}
       <header className="px-4 sm:px-6 lg:px-8 pt-8 pb-4 text-center">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-green-800 tracking-tight">
           Explore Plants
@@ -158,14 +152,12 @@ export default function HomePage() {
         </p>
       </header>
 
-      {/* Masonry columns container */}
       <motion.section
         variants={containerVariants}
         initial="hidden"
         animate="show"
         className="px-4 sm:px-6 lg:px-8 pb-12"
       >
-        {/* Masonry via CSS columns */}
         <div className="mx-auto max-w-6xl columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6">
           {loading
             ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
