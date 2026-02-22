@@ -103,14 +103,28 @@ export default function HomePage() {
     let alive = true;
     (async () => {
       try {
+        // ✅ Always fetch from public plants collection
         const data = await getPublicPlants();
-        if (alive) setPlants(data);
+
+        if (alive) {
+          // Shuffle after fetching
+          setPlants(data);
+        }
       } catch (error) {
-        console.error("Failed to fetch plants", error);
+        console.error("Failed to fetch public plants, using fallback", error);
+
+        if (alive) {
+          // Fallback already handled inside getPublicPlants
+          const fallbackData = await import("../db/fallbackPlants").then(
+            (mod) => mod.fallbackPlants,
+          );
+          setPlants(fallbackData);
+        }
       } finally {
         if (alive) setLoading(false);
       }
     })();
+
     return () => {
       alive = false;
     };
