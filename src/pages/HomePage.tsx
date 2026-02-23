@@ -1,7 +1,6 @@
 // src/pages/HomePage.tsx
 import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { getPublicPlants } from "../api/plantService";
 import { fallbackPlants } from "../db/fallbackPlants";
 import type { TPlant } from "../types/plant";
 import type { Variants } from "framer-motion";
@@ -97,36 +96,18 @@ export default function HomePage() {
   useEffect(() => {
     let alive = true;
 
-    (async () => {
-      try {
-        console.log("Fetching public plants...");
-        const data = await getPublicPlants();
-        console.log("Data fetched from API:", data);
-
-        // Merge fallback + DB data
-        const merged = [...fallbackPlants, ...data];
-
-        // Remove duplicates by id
-        const uniquePlants = merged.filter(
-          (plant, index, self) =>
-            index === self.findIndex((p) => p.id === plant.id),
-        );
-
-        if (alive) setPlants(uniquePlants);
-      } catch (error) {
-        console.error("Failed to fetch public plants, using fallback", error);
-        if (alive) setPlants(fallbackPlants);
-      } finally {
-        if (alive) setLoading(false);
-      }
-    })();
+    // Directly use fallbackPlants for instant load
+    if (alive) {
+      setPlants(fallbackPlants);
+      setLoading(false);
+    }
 
     return () => {
       alive = false;
     };
   }, []);
 
-  // Optional: shuffle for dynamic layout
+  // Optional: shuffle for a dynamic masonry feel
   const shuffled = useMemo(() => {
     if (!plants?.length) return [];
     return [...plants].sort(() => Math.random() - 0.5);
@@ -134,6 +115,7 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen">
+      {/* Background Gradient */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
@@ -143,6 +125,7 @@ export default function HomePage() {
         }}
       />
 
+      {/* Header */}
       <header className="px-4 sm:px-6 lg:px-8 pt-8 pb-4 text-center">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-green-800 tracking-tight">
           Explore Plants
@@ -152,6 +135,7 @@ export default function HomePage() {
         </p>
       </header>
 
+      {/* Masonry Section */}
       <motion.section
         variants={containerVariants}
         initial="hidden"
